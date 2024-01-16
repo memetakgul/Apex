@@ -89,6 +89,7 @@ WHERE fieldName =: variable // tek variablar
 WHERE fieldName IN: variable // listeler icin kullanilir 
 WHERE fieldName LIKE variable  // ister tek ister liste 
 */
+
 string rating ='Hot';
 list<account>  accList = [SELECT Id, Name, Type, Phone  
                           FROM Account 
@@ -120,24 +121,31 @@ list<account>  accList = [SELECT Id, Name, Type, Phone
                           FROM Account 
                           WHERE type IN :aranacaklar ];
 system.debug(accList.size()); // 7 
+
+
 //   WILD card  ve LIKE   methodu 
 //  WHERE fieldName LIKE variable  
 //  %   ==>   bir veya birden cok karakter
 //  _    ==> sadece 1 karakter demektir
 //  bas harfi U olan accountlari getirin
+
 SELECT Id, Name, Type, Phone  
        FROM Account 
        WHERE name LIKE 'U%'
 //  bas harfi U olan accountlari getirin
+
 list<account> accList = [SELECT Id, Name, Type, Phone  
                            FROM Account 
                            WHERE name LIKE 'U%'];
 system.debug(accList.size()); // 4
+
 //  bas harfi U OLMAYANLAR accountlari getirin
 list<account> accList = [SELECT Id, Name, Type, Phone  
                            FROM Account 
                            WHERE     NOT name LIKE 'U%'   ];
 system.debug(accList.size()); // 11
+
+
 // data binding
 string deger = 'U%';
 list<account> accList = [SELECT Id, Name, Type, Phone  
@@ -152,6 +160,8 @@ list<account> accList = [SELECT Id, Name, Type, Phone
                            FROM Account 
                            WHERE name LIKE : arancaklar];
 system.debug(accList.size()); // 6
+
+
 // wild card ornekleri
 //  %   ==>   bir veya birden cok karakter
 //  _    ==> sadece 1 karakter demektir
