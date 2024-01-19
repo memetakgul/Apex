@@ -1,3 +1,5 @@
+
+
 // Salesforce Object Query Language
 
 SELECT  filed1 , filed2 , filed3  FROM objectAdi

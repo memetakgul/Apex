@@ -151,6 +151,7 @@ FARKLI RETURN TYPE veya
 FARKLI PARAMETRELI
 Method yazilabilmesi
 */
+
 Hayvan hyn = new Hayvan();
 system.debug(hyn.toplama(2,3));
 system.debug(hyn.toplama(2,3 , 5));
@@ -168,6 +169,7 @@ Body kismi farkli
 Method yazilabilmesi
 ** Private methodlar  VE  Statik methodlar override edilemez
 */
+
 Hayvan hyn = new Hayvan();
 hyn.hareket(); // Hayvanlar kareket eder
 kopek comar = new Kopek();
@@ -200,6 +202,7 @@ public INTERFACE SekizinciSinifMat {
     void turev();
     
 }
+
 public INTERFACE YedinciSinifMat {
 //  gizli olarak abstracttir
 //  icindeki methodlarda gizli olarak abstractir
@@ -256,6 +259,7 @@ public class AbstractFatmaHanim  EXTENDS Ogretmen  IMPLEMENTS  YedinciSinifMat ,
     }
     
     // yedinciSinif interface mecburuz
+    
    PUBLIC  VOID usluSayilar() {
        // system.debug('Yorgunum  az soru cozecegim');
         
