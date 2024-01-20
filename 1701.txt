@@ -1,4 +1,5 @@
 public class DMLOrnekleri {
+    
 // DATA MANIPULATION LANGUAGE
     //   INSERT   === > yeni kayit olustur
     //   UPDATE   === >  var olan kayidi guncelle ( edit )
@@ -10,7 +11,7 @@ public class DMLOrnekleri {
  // SaveResult Class
  // https://developer.salesforce.com/docs/atlas.en-us.apexref.meta/apexref/apex_methods_system_database_saveresult.htm#apex_methods_system_database_saveresult   
     
- 
+ //  INSERT   === >
     public static VOID accOlustur(String accIsim,string accRating  , string tel    ){
         
         
@@ -23,11 +24,13 @@ public class DMLOrnekleri {
         
         
     }
-    public STATIC INTEGER accListOlustur(integer accSayisi , string accIsmi    ){
- 
+
+
  // bulkify
 // governer limit  
-   
+
+    public STATIC INTEGER accListOlustur(integer accSayisi , string accIsmi    ){
+  
   list<account> accList = new List<account>();
     for(integer i=0 ; i< accSayisi ; i++      ){
        Account yeniRecord = new Account();
@@ -43,26 +46,112 @@ public class DMLOrnekleri {
         
     }
     
+//    DELETE   ====>
+     
     public static VOID deleteAllRecords(string silinecekler){
         
-        
+    /*   //1.Yontem  
+
      list<account> accList = [SELECT Id, Name, Type, Phone
                            FROM Account
                            WHERE name LIKE : silinecekler];
-     delete accList;   
+    */
+    
+    string sorgu = 'SELECT Id, Name, Type, Phone FROM Account WHERE name LIKE : silinecekler';
+	
+        list<account> accList =  database.query(sorgu); 
+    delete accList;   
         
     }  
     
     
-    //  id si verilen accountu sil
+      //  id si verilen accountu sil
    public static VOID deleteOneRecord(string accId){
         
-       account acc = [SELECT Id, Name
-                           FROM Account
-                           WHERE id =: accId];
-     delete acc;   
+   account acc = new Account();
+  if (accId != null && (accId.length() == 15 || accId.length() == 18)) {      
+       acc = [ SELECT Id, Name, Phone
+                        FROM Account 
+                        WHERE ID =: accId    ];
+  }
+      
+if (acc.id != null) {
+    database.delete(acc );
+    System.debug('Hesap başarıyla silindi.');
+}else {
+        // Hesap bulunamazsa hata mesajı
+        System.debug('Hesap bulunamadı. Silme işlemi gerçekleştirilemedi.');
+    }
+
+/*  
+// Hesap sorgulama
+    List<Account> accList = [SELECT Id, Name, Phone FROM Account WHERE Id = :accId ];
+    // Hesap bulundu mu kontrolü
+    if (accList != null && !accList.isEmpty()) {
+        // Hesap silme işlemi
+        Account acc = accList[0];
+        Database.delete(acc);
+        System.debug('Hesap başarıyla silindi.');
+    } else {
+        // Hesap bulunamazsa hata mesajı
+        System.debug('Hesap bulunamadı. Silme işlemi gerçekleştirilemedi.');
+    }
+*/
+   
         
     }  
+    
+//   UNDELETE ===>>add ALL ROWS at the end of query
+       
+    public static void undeleteMethodu(string accName){
+        
+        string keyWord='%'+accName+'%';
+        list<account> accList = [ SELECT name FROM account 
+                                 WHERE name LIKE : keyWord ALL ROWS];
+        undelete accList;
+
+         /*     
+list<account> accList = [ SELECT id FROM account WHERE name = : accName ALL ROWS];    
+        
+        undelete accList;
+        */
+    } 
+    
+    //   UPDATE   === >
+
+    //   bir record delete edilmis ise ( cop tenekesinde ise)
+   //   bu record direkt update edilemez,,
+   //   once copten cikart.  sonra update et.
+   
+    
+    public static void updateMethod(string accId){
+         
+       account accRecord = [ SELECT name FROM account 
+                                 WHERE ID  =: accId];
+        accRecord.Name='WISE UPDATED';
+        
+        update accRecord;
+    }
+    
+    
+//   UPSERT   ===>> 
+       
+     public static void upsertMethod(string accId){
+         
+       account accRecord = [ SELECT name FROM account 
+                                 WHERE ID  =: accId];
+        accRecord.Name='WISE UPDATED @@@@@';
+        
+         account accYeni =new account();
+         accYeni.Name= 'AAA upsert ile olustu';
+         
+         list<account> accList= new List<Account>();
+         accList.add(accRecord);
+         accList.add(accYeni);
+         
+         
+        upsert accList;
+    }
     
     
 }
@@ -130,8 +219,3 @@ delete accList; //  data
 DMLOrnekleri.deleteAllRecords('AAA%');
 // 001Hu0000347A1zIAE
 DMLOrnekleri.deleteOneRecord('001Hu0000347A1zIAE');
-
-
-
-
-

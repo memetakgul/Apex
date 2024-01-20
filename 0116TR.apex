@@ -97,9 +97,11 @@ system.debug( 'COUNT >>> ' + [SELECT   COUNT(numberofemployees) FROM Account
 system.debug(' Max >>  ' + [SELECT   MAX(numberofemployees) 
                             FROM Account   WHERE numberofemployees >500  ]);
 // Max >>  (AggregateResult:{expr0=145000})
+
 // eger brup olarka almak istersek GROUP BY kullanilmasi gerek  
 [SELECT industry ,  COUNT(name) FROM Account  GROUP BY  industry ]
 system.debug(' COUNT >>  ' + [SELECT industry,  MAX(numberofemployees) FROM Account GROUP BY  industry ]);
+
 
 // AGGREGATE WHERE ile CALISMAZ
 SELECT Industry, COUNT(numberofemployees) FROM Account GROUP BY Industry  
@@ -169,11 +171,12 @@ FOR(Account  acc : siraliAccount  ){
 }   
 
  SELECT  name , AnnualRevenue  FROM   Account  WHERE  AnnualRevenue != null  ORDER BY AnnualRevenue DESC  
+
 //  where kullancaksak    where order by dan once gelmelidir    
      //  sorguyu sinirla ----->   LIMIT    OFFSET
      //   offset  limitten sonra yazilir
       //  OFFSET   demek  bu kadar recirdu passgec 
-      // LIMIT   sadece sana verdigim rakam kaar record getir
+      // LIMIT   sadece sana verdigim rakam kadar record getir
      
    List<Account> siraliAccount = [ SELECT  name , AnnualRevenue  
                                   FROM   Account    
@@ -208,11 +211,17 @@ public with sharing class SOQLOrnekleri {
     // WITH SECURITY_ENFORCED
     // // https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_classes_with_security_enforced.htm
     public list<Contact> contactlarVeAccountlari(){
-        
+     //1.Yontem   
         list<Contact>   cntList = [SELECT Id, Name,
                                    Account.Name
                                     FROM Contact
                                    WITH SECURITY_ENFORCED ];
+        /*
+	//2.Yontem >>> database.query(string)
+	string sorgu = 'SELECT Id, Name,Account.Name FROM Contact WITH SECURITY_ENFORCED';
+                                   
+        list<Contact> cntList = database.query(sorgu);
+        */
         
         return cntList;
     } 
@@ -264,7 +273,7 @@ for( Contact cnt :  sonucListesi    ){
  system.debug( cnt.Name + '   calistigi kurum >>> ' + cnt.Account.Name   );
 }
 
-//  idsini verecegim contacgoin nerede calsitigini soyle
+//  idsini verecegim contact in nerede calsitigini soyle
  SOQLOrnekleri ornek = new SOQLOrnekleri();
  string accAdi=  ornek.contactVeAccount('003Hu00003UFBfnIAH');
 system.debug( accAdi); // American Banking Corp.
@@ -284,29 +293,84 @@ for( account acc: accList){
 
 
 
-// soru 5  eger bilinmedik bir ID verilirse bu ID yi kontrole ederek veri donunuz
-List<account> accList=  SOQLOrnekleri.accVeContactlari('dthdhfdghf');
-system.debug(accList);
-
-
 //  ODEV 
 //Soru 1 Account objesinde  Industrye gore ayni sektorde calisan ve 
 //         firma sayisi 1 den fazla olan sektorleri getiriniz.
 // KOPYA
 // COUNT() ve HAVING
 
+AggregateResult[] aggResult=[SELECT Industry, COUNT(name) firmaSayisi
+                           FROM Account GROUP BY Industry  
+    					   HAVING COUNT(name)>1 ];
+system.debug(aggResult); 
+//(AggregateResult:{Industry=null, firmaSayisi=6}, 
+//AggregateResult:{Industry=Apparel, firmaSayisi=2}, 
+//AggregateResult:{Industry=Energy, firmaSayisi=3})
+
+
+
 // Soru 2 butun accountlari ve bu accountlarda contact olan ve ismi A ile baslayan kisileri bulun   
     
 // kopya  LIKE    ve wild card      
+
+
+list<Account>   conList = [SELECT Id, Name ,
+                           (SELECT Id, Name FROM Contacts )
+                               FROM Account Where name LIKE 'A%'];
+system.debug(conList.size()); 
+
+
     
 //SORU 3) Account objesinden gelen verileri azalan siraladiktan sonra 
 //        bastan 4. recordu getiriniz
 // KOPYA  OFFSET LIMIT
+
+List<Account> accList = [SELECT  name , AnnualRevenue  FROM   Account  
+                        ORDER BY AnnualRevenue DESC   NULLS LAST 
+                        LIMIT 1 OFFSET 3 ];
+system.debug(accList); 
+
 // SORU 4) Çalışan sayısı ikinci en yüksek olan Account adını ve çalışan sayısını seçin
 // KOPYA  OFFSET LIMIT
 //   tch the id,name,rating from account if the names are 
 //  'GenePoint', 'Burlington Textiles Corp of America', ' sForce' , 'Dickenson plc'
 //  dinamik kod yaziniz   liste olsuturun  ve o listeyi aratin 
+
+
+Account acc = [SELECT  name , NumberOfEmployees  FROM   Account  
+                        ORDER BY NumberOfEmployees DESC   NULLS LAST 
+                        LIMIT 1 OFFSET 1 ];
+//system.debug(acc); 
+
+list <string> accList= new list<string>{'GenePoint', 'Burlington Textiles Corp of America', ' sForce' , 'Dickenson plc','University of Arizona'};
+
+
+    if (accList.contains(acc.name)){
+        system.debug(acc.name); 
+    }else{
+         system.debug('Name of the account that searched not on the list');
+    }
+
+
+
+
+// soru 5  eger bilinmedik bir ID verilirse bu ID yi kontrole ederek veri donunuz
+
+public STATIC void idCheck(string accId){
+      
+        if (accId != null && (accId.length()==15 || accId.length()==18) ) {
+            List<account>  accList= [SELECT id,name   
+                              		FROM account 
+                              		WHERE id =: accId ];
+            if (accList != null){
+            system.debug ('ID ' + accId + ' geçerlidir, kullanıcı bulundu.');
+            }
+        } else {
+            system.debug ('ID ' + accId + ' geçersizdir, kullanıcı bulunamadı.'); 
+
+    	}   
+    
+    }
 
 
 

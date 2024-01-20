@@ -90,6 +90,8 @@ system.debug(accList.size());
 WHERE fieldName =: variable // tek variablar
 WHERE fieldName IN: variable // listeler icin kullanilir 
 WHERE fieldName LIKE variable  // ister tek ister liste 
+
+id icin LIKE olmaz =: kullanilir
 */
 
 string rating ='Hot';
@@ -97,25 +99,32 @@ list<account>  accList = [SELECT Id, Name, Type, Phone
                           FROM Account 
                           WHERE Rating = :rating  ];
 system.debug(accList.size()); // 3
+
 list<string> aranacaklar = new List<string>();
 aranacaklar.add('Hot');
 aranacaklar.add('Warm');
+
 list<account>  accList = [SELECT Id, Name, Type, Phone  
                           FROM Account 
                           WHERE Rating IN :aranacaklar ];
 system.debug(accList.size()); // 6
+
+
 // type Customer - Direct olanlari liste olarak getiriniz
+
 //1.yontem
 list<account>  accList = [SELECT Id, Name, Type, Phone  
                            FROM Account 
                            WHERE Type = 'Customer - Direct' ];
 system.debug(accList.size());// 7
+
 // 2. yontem
 string tipp ='Customer - Direct';
 list<account>  accList = [SELECT Id, Name, Type, Phone  
                           FROM Account 
                           WHERE Type = :tipp  ];
 system.debug(accList.size()); // 7
+
 // 3. yontem
 list<string> aranacaklar = new List<string>();
 aranacaklar.add('Customer - Direct');
@@ -154,6 +163,7 @@ list<account> accList = [SELECT Id, Name, Type, Phone
                            FROM Account 
                            WHERE name LIKE : deger];
 system.debug(accList.size()); // 4
+
 // liste
 list<string> arancaklar = new List<string>();
 arancaklar.add('U%');
@@ -192,6 +202,7 @@ for ( account  acc :basHafriUOlanlar ){
 
 
 // childdan parenta query
+
 list<opportunity>   oppList = [SELECT Opportunity.Id, Opportunity.Name , 
                                Account.Name  ,Account.rating     
                                FROM Opportunity];
