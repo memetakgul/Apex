@@ -33,6 +33,7 @@ public class SOSLOrnek {
      string keyword =  filtre+'*' ; 
      string sorgu = 'Find {' +keyword+   '} RETURNING account ( name ,phone , fax ) , contact , opportunity';   
     
+    
  /*
 String searchStr1 = '*'+searchStr+'*';
  String searchQuery = 'FIND \'' + searchStr1 + '\' IN ALL FIELDS RETURNING  Account (Id,Name,type),Contact(name,email),Opportunity(name,StageName)';
