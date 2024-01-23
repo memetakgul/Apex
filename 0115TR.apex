@@ -89,8 +89,8 @@ system.debug(accList.size());
 /*
 WHERE fieldName =: variable // tek variablar
 WHERE fieldName IN: variable // listeler icin kullanilir 
-WHERE fieldName LIKE variable  // ister tek ister liste 
-
+WHERE fieldName LIKE variable  // direk string kullanilirsa
+                LIKE : variable // string bir variable a veya listeye  atanirsa 
 id icin LIKE olmaz =: kullanilir
 */
 
