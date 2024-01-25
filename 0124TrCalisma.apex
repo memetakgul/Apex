@@ -99,7 +99,60 @@ Map<string, integer> endustriFirsatlari = new Map<string, integer>();
         }
       }
         
+      //acoountlarin ratinglerini ve bu ratinglerde kac account oldugunu bul  
+    public static void accRating(){
+        
+        list <account> accList=new List<account>(); 
+        map<string,integer> myMap = new Map<string,integer>();
+        
+        try{
+            accList=[SELECT id, rating FROM account];
+        }catch(Exception e){
+            system.debug(accList+' Listesinde bir hata olustu');
+        }       
+            if(accList.size()>0){
+              for(account acc : accList){
+                  integer ratingSayisi= myMap.get(acc.rating); 
+                  if (ratingSayisi==null){
+                      myMap.put(acc.rating,1);
+                  }else{
+                      myMap.put(acc.rating,ratingSayisi+1);
+                  }
+                }  
+            }
+            system.debug(myMap);
+        }
     
+    //rating hot ise opp satage Negotiation/Review yap
+    public static void updateStage(){
+        
+        list<opportunity> oppList= new list<opportunity>();
+        
+        try{
+            oppList=[SELECT id, Name, StageName, Account.Rating 
+                     FROM opportunity];
+        }catch(Exception e){
+             system.debug(oppList+' Listesinde bir hata olustu');
+        }
+        
+        if (oppList.size()>0){
+            for(opportunity opp : oppList){
+                if(opp.Account.Rating=='Hot'){
+                    opp.StageName='Negotiation/Review';
+                }else if(opp.Account.Rating==null){
+                    opp.StageName='Prospecting';
+                    
+                }
+            }
+             try{
+                database.update(oppList,false);
+            }catch(Exception e){
+                 system.debug(oppList+' Listesinde bir hata olustu. '+oppList+' guncellenemiyor');
+            }
+        }
+       
+        
+    }
     
     
     
