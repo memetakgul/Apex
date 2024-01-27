@@ -12,6 +12,7 @@ system.debug(oppList);
 RecordTypeId=012Hu000001DwebIAC}
 */
 
+
 for( opportunity  opp:   oppList ){
     //system.debug(opp); // {Id=006Hu00001WWJoWIAX, Name=new opp with new record type, RecordTypeId=012Hu000001DwebIAC}
     //system.debug(opp.Account.Name); // Farmers Coop. of Florida
