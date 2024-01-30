@@ -155,9 +155,85 @@ Map<string, integer> endustriFirsatlari = new Map<string, integer>();
     }
     
     
+    // account rating  hot ise opp stage closed won
+   // account rating warm ise opp stage qualification 
+    
+    
+    public static void deneme4Account(){
+        
+        List<Account> accList = new  List<Account> ();
+        List<Opportunity> oppList = new  List<Opportunity> ();
+        List<string> arananlar= new List<string>();
+         arananlar.add('Hot');
+         arananlar.add('Warm');
+
+              accList= [SELECT id, Name,Rating, 
+                        (Select name, StageName From Opportunities ) 
+                        From Account Where Rating IN:arananlar LIMIT 3];
+        
+         system.debug(accList);
+        
+         if(acclist.size()>0){
+             for(Account acc:accList){
+
+                 for(Opportunity opp:acc.Opportunities ){
+                     if (acc.Rating=='Hot'){
+                     opp.StageName='Closed Won';
+                         
+                     } else if (acc.Rating=='Warm'){
+                       opp.StageName='Qualification';	
+                     } 
+                     system.debug(opp);
+                     oppList.add(opp);
+                 }
+              }
+             system.debug(oppList);
+         Database.update(oppList,false);   
+         }
+       
+    }
+    
+    
+    public static VOID oppUpdate(){
+        
+        map<id,account> accMap = new map <id,account>();
+        List<string> arananlar= new List<string>();
+         arananlar.add('Cold');
+         arananlar.add('Warm');
+        
+        accMap = new Map <ID, account>([SELECT name, rating,
+                    					(SELECT name, StageName FROM Opportunities)
+                    					FROM Account Where Rating LIKE :arananlar]);
+        SET<id> accIdleri = accMap.keySet();
+        
+        if(!accMap.isEmpty()){
+            for(id accId : accIdleri ){
+                account acc = accMap.get(accId);
+                
+                List<Opportunity> oppList = new  List<Opportunity> ();
+                
+                    if(acc.Rating=='Cold'){
+                        oppList.add(acc.opportunities);
+                    }
+                if(!oppList.isEmpty()){
+                    for (opportunity opp:oppList){
+                           opp.StageName='Prospecting'; 
+                        } 
+					update oppList;
+                }
+                            
+                        
+            } 
+        }
+        
+        
+        
+        
+    }
     
     
     
+
     
     
     
